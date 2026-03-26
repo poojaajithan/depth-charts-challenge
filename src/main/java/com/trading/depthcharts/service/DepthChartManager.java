@@ -47,7 +47,7 @@ public class DepthChartManager {
         // if player is already present, remove them first to prevent a duplicate entry
         playersList.remove(player);
 
-        if (positionDepth == null || positionDepth < 0 || playersList.size()<positionDepth){
+        if (positionDepth == null || positionDepth < 0 || positionDepth > playersList.size()){
             // if depth is invalid, rule is to append player at end
             playersList.add(player);
         }
@@ -100,7 +100,7 @@ public class DepthChartManager {
         }
 
         int playerIndex = playersList.indexOf(player);
-        if (playerIndex >= 0 && playersList.size()>1){
+        if (playerIndex >= 0){
             return new ArrayList<>(playersList.subList(playerIndex+1, playersList.size()));
         }
 
