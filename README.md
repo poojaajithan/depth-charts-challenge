@@ -1,4 +1,4 @@
-# FanDuel Trading Solutions - NFL Depth Charts
+# FanDuel - NFL Depth Charts
 
 This project implements an in-memory Depth Chart Manager for sports teams. It provides a robust, strictly typed, and encapsulated API to add players, remove players, and query backups across various positions.
 
