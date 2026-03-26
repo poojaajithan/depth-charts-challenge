@@ -33,7 +33,7 @@ O(1) Lookups: Provides near-instant access to any position's depth chart.
 Deterministic Ordering: LinkedHashMap ensures that when getFullDepthChart() is called, positions are printed in the exact order they were initially registered in the system.
 
 ### 3. Strict Typing for Removal
-The prompt requested a removal method that returns the removed player on success, but an empty list on failure. To maintain strict type safety and avoid returning null or raw Object types, removePlayerFromDepthChart returns a List<Player>.
+The prompt requested a removal method that returns the removed player on success, but an empty list on failure. Returning a single object on success and a Collection on failure breaks Java's strict typing and requires returning null or Object. To maintain type safety, removePlayerFromDepthChart returns a List<Player>. It securely returns List.of(removedPlayer) on success, and Collections.emptyList() if the player is not found.
 
 Success: Returns List.of(removedPlayer).
 
