@@ -5,9 +5,24 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.trading.depthcharts.model.Player;
+
+/**
+ * A service class responsible for managing the depth chart of a sports team.
+ * * <p>This manager provides functionality to add players to specific positions,
+ * gracefully handle depth reassignments, remove active players, and query backups.
+ * * <p><b>Architecture Note:</b> 
+ * State is maintained in-memory using a {@link java.util.LinkedHashMap} to preserve 
+ * the insertion order of positions for deterministic console output. 
+ * * <p><b>Thread Safety:</b>
+ * This current implementation relies on standard collections and is not thread-safe. 
+ * If accessed concurrently by multiple threads, external synchronization is required.
+ *
+ * @author pajithan
+ */
 
 public class DepthChartManager {
     private final Map<String, List<Player>> depthChart;
@@ -24,6 +39,9 @@ public class DepthChartManager {
      */
 
     public void addPlayerToDepthChart(String position, Player player, Integer positionDepth) {
+        Objects.requireNonNull(position, "Position cannot be null");
+        Objects.requireNonNull(player, "Player cannot be null");
+        
         List<Player> playersList = depthChart.computeIfAbsent(position, k -> new ArrayList<>());
         
         // if player is already present, remove them first to prevent a duplicate entry
@@ -46,8 +64,10 @@ public class DepthChartManager {
      * Returns an empty List if the position does not exist, or if the player is not found at that position.
      */
     public List<Player> removePlayerFromDepthChart(String position, Player player){
-        List<Player> playersList = depthChart.get(position);
+        Objects.requireNonNull(position, "Position cannot be null");
+        Objects.requireNonNull(player, "Player cannot be null");
 
+        List<Player> playersList = depthChart.get(position);
         if (playersList == null || playersList.isEmpty()){
             return Collections.emptyList();
         }
@@ -60,9 +80,21 @@ public class DepthChartManager {
         return Collections.emptyList();
     }
 
+    /**
+     * Retrieves a list of backup players for a specific player at a given position.
+     * A backup is defined as any player with a lower position depth (i.e., listed after 
+     * the specified player in the depth chart).
+     * @param position The position to query (e.g., "QB", "LWR").
+     * @param player   The Player object for whom backups are being requested.
+     * @return A safely encapsulated List of backup Players. 
+     * Returns an empty List if the position does not exist, the player is not 
+     * listed at that position, or the player has no backups.
+     */
     public List<Player> getBackups(String position, Player player){
-        List<Player> playersList = depthChart.get(position);
+        Objects.requireNonNull(position, "Position cannot be null");
+        Objects.requireNonNull(player, "Player cannot be null");
 
+        List<Player> playersList = depthChart.get(position);
         if (playersList == null || playersList.isEmpty()){
             return Collections.emptyList();
         }
@@ -75,6 +107,13 @@ public class DepthChartManager {
         return Collections.emptyList();
     }
 
+    /**
+     * Prints the full depth chart to the console.
+     * Iterates through all tracked positions and prints the active players 
+     * in their correct depth order. Positions are printed in the order 
+     * they were initially added to the system.
+     * Positions with no active players are skipped to maintain clean output.
+     */
     public void getFullDepthChart(){
         for(Map.Entry<String, List<Player>> entry : depthChart.entrySet()){
             String position = entry.getKey();
