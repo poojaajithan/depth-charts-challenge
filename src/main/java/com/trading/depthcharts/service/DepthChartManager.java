@@ -73,7 +73,7 @@ public class DepthChartManager {
 
         List<Player> playersList = depthChart.computeIfAbsent(formatPosition, k -> new ArrayList<>());
         
-        if (getTotalPlayersCount() >= sport.getMaxRosterSize() && !playersList.contains(player)){
+        if (getTotalPlayersCount() >= sport.getMaxRosterSize() && !isPlayerOnRoster(player)){
             throw new DepthChartException("Maximum roster limit of " + sport.getMaxRosterSize() + " reached.");
         }
         
@@ -220,5 +220,10 @@ public class DepthChartManager {
     private void logAction(String action, Player player, String position, String details) {
         System.out.printf("[%s] %s | %s at %s | %s%n", 
             teamNameShort, action, player.name(), position, details);
+    }
+
+    private boolean isPlayerOnRoster(Player player) {
+        return depthChart.values().stream()
+                .anyMatch(list -> list.contains(player));
     }
 }

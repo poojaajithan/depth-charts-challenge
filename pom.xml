@@ -5,9 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.trading.depthcharts</groupId>
-    <artifactId>nfl-depth-charts</artifactId>
+    <artifactId>depth-charts-manager</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>NFL Depth Charts</name>
+    <name>Multi-Sport Depth Charts</name>
+    <description>A scalable depth chart manager for the FanDuel coding challenge.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

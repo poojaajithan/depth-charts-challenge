@@ -1,6 +1,6 @@
-# FanDuel Trading Solutions - NFL Depth Charts
+# FanDuel Trading Solutions - Multi-Sport Depth Charts
 
-This project implements an in-memory Depth Chart Manager for sports teams. It provides a robust, strictly typed, and encapsulated API to add players, remove players, and query backups across various positions.
+This project implements an in-memory, multi-sport Depth Chart Manager. It provides a robust, strictly typed, and encapsulated API to add players, remove players, and query backups across various leagues (e.g., NFL, NBA, MLB).
 
 ## 🚀 Architecture & Design Decisions
 
@@ -67,9 +67,9 @@ After the build finishes, open the ```target/site/surefire-report.html``` file i
 4. **Team Identity Validation:** To avoid hardcoding all 32 NFL franchises into a static Enum, the system relies on constructor validation for basic string integrity. It is assumed that in a production environment, team identity strings are validated upstream by the database or calling service.
 
 ## ⏱️ Time & Space Complexity
-**Space Complexity:** O(P) where P is the total number of position assignments across the roster.
-**Time Complexity (Add/Remove):** O(N) where N is the depth size of the specific position list, due to the array-shifting nature of ArrayList insertions and removals.
-**Time Complexity (Querying):** O(1) to retrieve the position list via the LinkedHashMap, followed by an O(N) traversal to locate the player's index for backup extraction.
+* **Space Complexity:** O(P) where P is the total number of position assignments across the roster.
+* **Time Complexity (Add/Remove):** O(N) where N is the depth size of the specific position list, due to the array-shifting nature of ArrayList insertions and removals.
+* **Time Complexity (Querying):** O(1) to retrieve the position list via the LinkedHashMap, followed by an O(N) traversal to locate the player's index for backup extraction.
 
 ## 📝 Notes on Requirement Corrections
 
