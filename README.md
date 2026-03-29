@@ -55,17 +55,15 @@ mvn surefire-report:report
 
 After the build finishes, open the target/site/surefire-report.html file in your web browser to view the visual dashboard.
 
-📋 Assumptions Made
-Thread Safety: As an in-memory coding challenge, the current DepthChartManager relies on standard collections and is not thread-safe. In a production environment with concurrent user requests, the underlying map would be swapped for a ConcurrentHashMap and CopyOnWriteArrayList, or managed via standard database row-locks.
+## 📋 Assumptions Made
 
-Data Ingestion Boundary: Processing an external HTML or JSON document to seed the initial data is considered out-of-scope for the core manager to adhere to the Single Responsibility Principle. In a real system, an external adapter or factory class would parse the DOM and pass the sanitized Player records to the manager.
+1. **Thread Safety:** As an in-memory coding challenge, the current `DepthChartManager` relies on standard collections and is not thread-safe. In a production environment with concurrent user requests, the underlying map would be swapped for a `ConcurrentHashMap` and `CopyOnWriteArrayList`, or managed via standard database row-locks.
+2. **Data Ingestion Boundary:** Processing an external HTML or JSON document to seed the initial data is considered out-of-scope for the core manager to adhere to the Single Responsibility Principle. In a real system, an external adapter or factory class would parse the DOM and pass the sanitized `Player` records to the manager.
+3. **Data Model Integrity over Output Typos:** The assignment PDF listed players like Jaelon Darden and Mike Evans occasionally as "WR" or "QB" in the sample outputs, but the data model clearly defined them as "LWR". I assumed the initial data model table was the source of truth, and updated the `DepthChartApplication.java` runner to use the correct positions.
 
-Data Model Integrity over Output Typos: The assignment PDF listed players like Jaelon Darden and Mike Evans occasionally as "WR" or "QB" in the sample outputs, but the data model clearly defined them as "LWR". I assumed the initial data model table was the source of truth, and updated the DepthChartApplication.java runner to use the correct positions.
+## 📝 Notes on Requirement Corrections
 
-📝 Notes on Requirement Corrections
 While implementing the system and verifying the prompt's Sample Data, the following corrections were applied to the runner logic to ensure technical accuracy:
 
-Position Mapping: The sample output queried backups for players (like Jaelon Darden) under the "QB" position, though they were explicitly registered as "LWR". The DepthChartApplication.java runner correctly targets their registered position keys.
-
-Removal Scope: The sample removal command attempted to remove Mike Evans from "WR", though his registration occurred under "LWR". The system enforces strict matching, so the runner was updated to use the correct "LWR" key.
-***
+1. **Position Mapping:** The sample output queried backups for players (like Jaelon Darden) under the `"QB"` position, though they were explicitly registered as `"LWR"`. The `DepthChartApplication.java` runner correctly targets their registered position keys.
+2. **Removal Scope:** The sample removal command attempted to remove Mike Evans from `"WR"`, though his registration occurred under `"LWR"`. The system enforces strict matching, so the runner was updated to use the correct `"LWR"` key.
