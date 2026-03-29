@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import com.trading.depthcharts.exception.DepthChartException;
 import com.trading.depthcharts.model.Player;
-import com.trading.depthcharts.model.Position;
 import com.trading.depthcharts.model.Sport;
 
 /**
@@ -80,7 +79,7 @@ public class DepthChartManager {
         
         if (playersList.size() >= sport.getMaxDepthPerPosition() && !playersList.contains(player)){
             throw new DepthChartException("Maximum depth of " + sport.getMaxDepthPerPosition() + " reached for position: " + formatPosition);
-        }
+        }   
 
         // if player present, remove it first to prevent a duplicate entry
         playersList.remove(player);
@@ -202,22 +201,20 @@ public class DepthChartManager {
             throw new DepthChartException("Position cannot be null or empty");
         }
         
-        String formatPosition =  position.trim().toUpperCase();
-        try{
-            Position.valueOf(formatPosition); 
-            return formatPosition;
+        String formatPosition = position.trim().toUpperCase();
+        
+        if (!sport.isValidPosition(formatPosition)) {
+            throw new DepthChartException("Invalid position: " + formatPosition + " for sport: " + sport.name());
         }
-        catch(IllegalArgumentException e)
-        {
-            throw new DepthChartException("Invalid position: " + formatPosition + " for sport: " + sport);
-        }
+        
+        return formatPosition;
     }
 
     private int getTotalPlayersCount() {
-        return depthChart.values()
-                        .stream()
-                        .mapToInt(List::size)
-                        .sum();     
+        return (int) depthChart.values().stream()
+                .flatMap(List::stream)
+                .distinct() 
+                .count();    
     }
 
     private void logAction(String action, Player player, String position, String details) {

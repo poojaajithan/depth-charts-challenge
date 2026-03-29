@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import com.trading.depthcharts.exception.DepthChartException;
 import com.trading.depthcharts.model.Player;
-import com.trading.depthcharts.model.Position;
 import com.trading.depthcharts.model.Sport;
 import com.trading.depthcharts.service.DepthChartManager;
 
@@ -145,10 +144,10 @@ public class DepthChartManagerTest {
 
     @Test
     void testAddPlayerMaxRosterSize() {
-        Position[] allPositions = Position.values();
-        
+        String[] allPositions = {"QB", "RB", "WR", "TE", "LT", "LG", "C", "RG", "RT", "LWR", "RWR", "K", "P"};
+
         for (int i = 0; i < Sport.NFL.getMaxRosterSize(); i++) {
-            String pos = allPositions[i % allPositions.length].name(); 
+            String pos = allPositions[i % allPositions.length]; 
             manager.addPlayerToDepthChart(pos, new Player(i, "Player " + i), null);
         }
         
@@ -160,7 +159,7 @@ public class DepthChartManagerTest {
         assertTrue(exception.getMessage().contains("Maximum roster limit of " + Sport.NFL.getMaxRosterSize() + " reached"));
 
         Player existingPlayer = new Player(0, "Player 0"); 
-        String originalPos = allPositions[0].name(); 
+        String originalPos = allPositions[0]; 
         
         try {
             manager.addPlayerToDepthChart(originalPos, existingPlayer, 1);

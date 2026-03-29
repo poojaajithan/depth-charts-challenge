@@ -9,6 +9,7 @@ To guarantee data integrity, `Player` is implemented as an immutable Java 17 `re
 * **Identity Management:** The `equals()` and `hashCode()` methods are explicitly overridden to evaluate *only* the player's unique jersey number. This allows the system to accurately identify and remove players without relying on object reference equality.
 * **Fail-Fast Instantiation:** A custom InvalidPlayerException is thrown at the model level if a player is instantiated with invalid data.
 * **Constructor Guardrails:** The DepthChartManager constructor acts as a domain "bouncer," throwing a DepthChartException if initialized with null sports, invalid team name lengths, or blank strings.
+* **Global Roster Integrity:** The system ensures that players assigned to multiple positions (e.g., a player starting at both LT and RT) are only counted once against the global maximum roster limit by dynamically calculating distinct player instances.
 
 ### 2. Internal Data Structure & Memory Safety
 The core state is managed via a `LinkedHashMap<String, List<Player>>`.
@@ -23,8 +24,8 @@ The system is built to scale beyond the NFL. By utilizing a data-driven Sport En
 
 Attempting to violate these rules throws a unified DepthChartException.
 
-### 4. Overcoming Primitive Obsession
-To ensure compile-time safety and prevent runtime typos, raw string inputs for positions and sports are sanitized and validated against strictly defined `Position` and `Sport` Enums before any map lookups occur. 
+### 4. Overcoming Primitive Obsession & Scaling Sports
+To ensure compile-time safety and prevent runtime typos, raw string inputs for positions are sanitized and validated against a strictly defined set of valid positions encapsulated within the Sport Enum itself. This prevents the "God Enum" anti-pattern; instead of a single massive Position enum holding every sport's positions, the Sport.NFL configuration independently knows to accept "QB" and reject "PG".
 
 ## 🛠️ How to Build and Run
 
@@ -64,6 +65,11 @@ After the build finishes, open the ```target/site/surefire-report.html``` file i
 2. **Data Ingestion Boundary:** Parsing the provided HTML to seed initial data was treated as out-of-scope to adhere to the Single Responsibility Principle. The system is designed as an API that accepts clean Player objects.
 3. **Data Model Integrity over Output Typos:** The assignment PDF listed players like Jaelon Darden and Mike Evans occasionally as "WR" or "QB" in the sample outputs, but the data model clearly defined them as "LWR". I assumed the initial data model table was the source of truth, and updated the `DepthChartApplication.java` runner to use the correct positions.
 4. **Team Identity Validation:** To avoid hardcoding all 32 NFL franchises into a static Enum, the system relies on constructor validation for basic string integrity. It is assumed that in a production environment, team identity strings are validated upstream by the database or calling service.
+
+## ⏱️ Time & Space Complexity
+**Space Complexity:** O(P) where P is the total number of position assignments across the roster.
+**Time Complexity (Add/Remove):** O(N) where N is the depth size of the specific position list, due to the array-shifting nature of ArrayList insertions and removals.
+**Time Complexity (Querying):** O(1) to retrieve the position list via the LinkedHashMap, followed by an O(N) traversal to locate the player's index for backup extraction.
 
 ## 📝 Notes on Requirement Corrections
 
